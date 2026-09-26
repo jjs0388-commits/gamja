@@ -1,0 +1,116 @@
+<!-- ==========================================
+  [화면 1: 상품 목록 및 네비게이션] HTML 모듈
+  작성자: 프론트엔드 엔지니어 A
+  파일명: parts/screen1_list.html
+========================================== -->
+
+<div class="gamza-screen1-container">
+  <!-- 1. 상단 글로벌 네비게이션 헤더 -->
+  <header class="gamza-header">
+    <div class="gamza-header-inner">
+      <!-- 로고 -->
+      <a href="#" class="gamza-logo" id="header-logo" title="감자마켓 홈으로 이동">
+        <span class="logo-icon">🥔</span>
+        <span class="logo-text">감자마켓</span>
+      </a>
+
+      <!-- 실시간 검색바 -->
+      <div class="gamza-search-wrapper">
+        <div class="search-input-group">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input 
+            type="text" 
+            id="search-input" 
+            class="search-input" 
+            placeholder="상품명, 동네를 검색해보세요" 
+            autocomplete="off"
+            aria-label="상품 검색"
+          />
+          <button type="button" id="search-clear-btn" class="search-clear-btn" aria-label="검색어 지우기" style="display: none;">
+            ✕
+          </button>
+        </div>
+      </div>
+
+      <!-- 헤더 우측 액션 버튼 그룹 -->
+      <div class="gamza-header-actions">
+        <button type="button" id="btn-open-write" class="btn btn-write" title="판매 물품 등록하기">
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 5v14M5 12h14"></path>
+          </svg>
+          <span class="btn-text">글쓰기</span>
+        </button>
+
+        <button type="button" id="btn-login-placeholder" class="btn btn-login" title="로그인">
+          로그인
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 메인 콘텐츠 영역 -->
+  <main class="gamza-main-content">
+    <!-- 2. 카테고리 탭 / 네비게이션 -->
+    <nav class="gamza-category-nav" aria-label="상품 카테고리">
+      <div class="category-scroll-container" id="category-tabs">
+        <button type="button" class="category-tab active" data-category="전체">
+          <span class="tab-emoji">📦</span> 전체
+        </button>
+        <button type="button" class="category-tab" data-category="디지털기기">
+          <span class="tab-emoji">📱</span> 디지털기기
+        </button>
+        <button type="button" class="category-tab" data-category="가구/인테리어">
+          <span class="tab-emoji">🪑</span> 가구/인테리어
+        </button>
+        <button type="button" class="category-tab" data-category="의류">
+          <span class="tab-emoji">👕</span> 의류
+        </button>
+        <button type="button" class="category-tab" data-category="생활가전">
+          <span class="tab-emoji">🔌</span> 생활가전
+        </button>
+        <button type="button" class="category-tab" data-category="도서/티켓">
+          <span class="tab-emoji">📚</span> 도서/티켓
+        </button>
+        <button type="button" class="category-tab" data-category="기타">
+          <span class="tab-emoji">🏷️</span> 기타
+        </button>
+      </div>
+    </nav>
+
+    <!-- 3. 필터 & 정렬 컨트롤 바 -->
+    <section class="gamza-filter-bar">
+      <div class="filter-info">
+        <span class="count-label">전체 매물 <strong id="product-count-display">0</strong>개</span>
+      </div>
+
+      <div class="filter-controls">
+        <!-- 거래 가능만 보기 토글 스위치 -->
+        <label class="toggle-switch-label" for="toggle-available-only">
+          <input type="checkbox" id="toggle-available-only" class="toggle-checkbox" />
+          <span class="toggle-slider"></span>
+          <span class="toggle-text">거래 가능만 보기</span>
+        </label>
+      </div>
+    </section>
+
+    <!-- 4. 상품 카드 그리드 영역 -->
+    <section class="gamza-product-section" aria-label="상품 목록">
+      <div class="gamza-product-grid" id="gamza-product-grid">
+        <!-- 자바스크립트에 의해 동적으로 렌더링됩니다 -->
+      </div>
+
+      <!-- 검색 / 필터링 결과가 없을 때 표시되는 빈 상태 -->
+      <div class="gamza-empty-state" id="gamza-empty-state" style="display: none;">
+        <div class="empty-icon">🥔💨</div>
+        <h3 class="empty-title">조건에 맞는 상품이 없어요</h3>
+        <p class="empty-desc">검색어를 변경하거나 필터를 해제해 보세요.</p>
+        <button type="button" class="btn btn-reset-filter" id="btn-reset-filters">
+          전체 상품 보기
+        </button>
+      </div>
+    </section>
+  </main>
+</div>

@@ -1,0 +1,19 @@
+{
+  "name": "gamja",
+  "version": "1.0.0",
+  "description": "감자마켓 (Gamza) - 우리 동네 중고거래 & 이웃 소통 웹 애플리케이션",
+  "main": "server.mjs",
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "dev": "node server.mjs"
+  },
+  "keywords": [
+    "gamja",
+    "second-hand-market",
+    "supabase",
+    "vanilla-js"
+  ],
+  "author": "",
+  "license": "MIT"
+}

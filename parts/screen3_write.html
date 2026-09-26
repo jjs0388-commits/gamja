@@ -1,0 +1,243 @@
+<!-- ========================================================
+  [화면 3] 글쓰기 모달 / 폼 (Gamza Screen 3 - Write Modal)
+  ======================================================== -->
+<div id="gamza-write-modal" class="gamza-modal-overlay" aria-hidden="true" role="dialog" aria-labelledby="write-modal-title">
+  <div class="gamza-modal-container">
+    <!-- 모달 헤더 -->
+    <header class="gamza-modal-header">
+      <div class="gamza-modal-title-wrap">
+        <h2 id="write-modal-title" class="gamza-modal-title">
+          <span class="potato-icon">🥔</span> 내 물건 팔기
+        </h2>
+        <p class="gamza-modal-desc">따뜻한 이웃들과 포근하고 정직한 거래를 시작해보세요.</p>
+      </div>
+      <button type="button" class="gamza-modal-close" id="write-modal-close-btn" aria-label="모달 닫기">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </header>
+
+    <!-- 모달 본문 (폼) -->
+    <form id="gamza-write-form" class="gamza-write-form" novalidate>
+      <div class="gamza-modal-body">
+        
+        <!-- 1. 상품 이미지 섹션 -->
+        <section class="form-section image-section">
+          <label class="form-label required">
+            상품 이미지 <span class="label-sub">(대표 사진 등록)</span>
+          </label>
+          
+          <div class="image-uploader-wrapper">
+            <!-- 미리보기 박스 -->
+            <div class="image-preview-box" id="write-image-preview-box">
+              <img id="write-image-preview" src="" alt="미리보기 이미지" class="preview-img hidden" />
+              <div class="placeholder-content" id="write-image-placeholder">
+                <div class="placeholder-icon">📸</div>
+                <span class="placeholder-text">사진을 등록해주세요</span>
+                <span class="placeholder-hint">파일 업로드 또는 샘플 선택</span>
+              </div>
+              <button type="button" class="btn-remove-image hidden" id="write-remove-image-btn" title="이미지 삭제">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+
+            <!-- 이미지 입력 탭 및 옵션 -->
+            <div class="image-input-controls">
+              <div class="image-source-tabs">
+                <button type="button" class="tab-btn active" data-tab="upload">📁 파일 업로드</button>
+                <button type="button" class="tab-btn" data-tab="url">🔗 이미지 URL</button>
+                <button type="button" class="tab-btn" data-tab="sample">🥔 감자 샘플</button>
+              </div>
+
+              <!-- 파일 업로드 패널 -->
+              <div class="tab-panel active" id="tab-panel-upload">
+                <label for="write-image-file" class="file-upload-btn">
+                  <span>내 기기에서 사진 찾기</span>
+                </label>
+                <input type="file" id="write-image-file" accept="image/*" class="sr-only" />
+                <p class="field-hint">JPG, PNG, WebP 지원 (최대 5MB)</p>
+              </div>
+
+              <!-- URL 입력 패널 -->
+              <div class="tab-panel" id="tab-panel-url">
+                <div class="url-input-wrap">
+                  <input type="url" id="write-image-url" placeholder="https://example.com/image.jpg" class="form-input" />
+                  <button type="button" id="write-apply-url-btn" class="btn-secondary-sm">적용</button>
+                </div>
+                <p class="field-hint">웹에 호스팅된 이미지 링크를 직접 입력하세요.</p>
+              </div>
+
+              <!-- 감자 샘플 빠른 선택 패널 -->
+              <div class="tab-panel" id="tab-panel-sample">
+                <div class="sample-chips">
+                  <button type="button" class="sample-chip" data-img="https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=500&auto=format&fit=crop&q=80">
+                    🥔 포슬포슬 감자
+                  </button>
+                  <button type="button" class="sample-chip" data-img="https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=500&auto=format&fit=crop&q=80">
+                    💻 노트북 / 전자기기
+                  </button>
+                  <button type="button" class="sample-chip" data-img="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&auto=format&fit=crop&q=80">
+                    🎧 무선 헤드폰
+                  </button>
+                  <button type="button" class="sample-chip" data-img="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=500&auto=format&fit=crop&q=80">
+                    🛋️ 아늑한 가구
+                  </button>
+                  <button type="button" class="sample-chip" data-img="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=500&auto=format&fit=crop&q=80">
+                    📚 감자 인문학 도서
+                  </button>
+                  <button type="button" class="sample-chip" data-img="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=500&auto=format&fit=crop&q=80">
+                    ⌚ 스마트 워치
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <input type="hidden" id="write-final-image" value="" />
+          <span class="form-error" id="error-image"></span>
+        </section>
+
+        <!-- 2. 제목 입력 -->
+        <section class="form-section">
+          <label for="write-title" class="form-label required">상품명</label>
+          <input 
+            type="text" 
+            id="write-title" 
+            class="form-input" 
+            placeholder="글 제목을 입력해주세요 (예: 맛있는 고령 수미감자 5kg / 에어팟 프로 2세대)" 
+            maxlength="60"
+            required 
+          />
+          <div class="field-meta">
+            <span class="form-error" id="error-title"></span>
+            <span class="char-count"><span id="title-char-count">0</span>/60</span>
+          </div>
+        </section>
+
+        <!-- 3. 카테고리 & 판매 상태 (2열 배치) -->
+        <div class="form-row">
+          <!-- 카테고리 -->
+          <div class="form-col">
+            <label for="write-category" class="form-label required">카테고리</label>
+            <div class="select-wrapper">
+              <select id="write-category" class="form-select" required>
+                <option value="" disabled selected>카테고리 선택</option>
+                <option value="디지털기기">📱 디지털기기</option>
+                <option value="가구/인테리어">🛋️ 가구/인테리어</option>
+                <option value="의류">👕 의류/잡화</option>
+                <option value="생활가전">🍳 생활가전</option>
+                <option value="도서/티켓">📚 도서/티켓</option>
+                <option value="식품">🥔 감자 및 식품</option>
+                <option value="기타">🎁 기타 중고물품</option>
+              </select>
+            </div>
+            <span class="form-error" id="error-category"></span>
+          </div>
+
+          <!-- 판매 상태 -->
+          <div class="form-col">
+            <label class="form-label required">판매 상태</label>
+            <div class="radio-status-group">
+              <label class="radio-status-card">
+                <input type="radio" name="write-status" value="판매중" checked />
+                <span class="status-badge status-selling">판매중</span>
+              </label>
+              <label class="radio-status-card">
+                <input type="radio" name="write-status" value="예약중" />
+                <span class="status-badge status-reserved">예약중</span>
+              </label>
+              <label class="radio-status-card">
+                <input type="radio" name="write-status" value="거래완료" />
+                <span class="status-badge status-completed">거래완료</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. 가격 & 나눔 옵션 -->
+        <section class="form-section">
+          <div class="label-with-option">
+            <label for="write-price" class="form-label required">판매 가격</label>
+            <label class="free-share-toggle">
+              <input type="checkbox" id="write-is-free" />
+              <span class="toggle-custom"></span>
+              <span class="toggle-label">🥔 무료 나눔하기</span>
+            </label>
+          </div>
+          
+          <div class="price-input-wrapper">
+            <span class="price-currency">₩</span>
+            <input 
+              type="text" 
+              id="write-price" 
+              class="form-input price-input" 
+              placeholder="0" 
+              inputmode="numeric" 
+            />
+            <span class="price-unit">원</span>
+          </div>
+          <div class="quick-price-chips" id="quick-price-container">
+            <button type="button" class="price-chip" data-add="1000">+1천원</button>
+            <button type="button" class="price-chip" data-add="5000">+5천원</button>
+            <button type="button" class="price-chip" data-add="10000">+1만원</button>
+            <button type="button" class="price-chip" data-add="50000">+5만원</button>
+            <button type="button" class="price-chip reset-price" id="write-price-clear">초기화</button>
+          </div>
+          <span class="form-error" id="error-price"></span>
+        </section>
+
+        <!-- 5. 거래 희망 동네 -->
+        <section class="form-section">
+          <label for="write-location" class="form-label required">거래 희망 장소 / 동네</label>
+          <div class="location-input-wrapper">
+            <span class="location-icon">📍</span>
+            <input 
+              type="text" 
+              id="write-location" 
+              class="form-input location-input" 
+              placeholder="예: 역삼1동, 강남역 4번 출구 앞" 
+              value="역삼1동"
+              maxlength="30"
+              required 
+            />
+          </div>
+          <span class="form-error" id="error-location"></span>
+        </section>
+
+        <!-- 6. 자세한 설명 -->
+        <section class="form-section">
+          <label for="write-description" class="form-label required">자세한 설명</label>
+          <textarea 
+            id="write-description" 
+            class="form-textarea" 
+            rows="6"
+            placeholder="동네 이웃에게 감자처럼 따뜻한 설명을 남겨주세요.
+- 물품 상태 (미개봉 / 실사용 기간 / 하자 여부)
+- 구매 시기 및 구매처
+- 직거래 선호 시간대 및 장소
+(신뢰할 수 있는 감자 마켓을 위해 솔직하게 작성해주세요 🥔)"
+            maxlength="600"
+            required
+          ></textarea>
+          <div class="field-meta">
+            <span class="form-error" id="error-description"></span>
+            <span class="char-count"><span id="desc-char-count">0</span>/600</span>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- 모달 푸터 (액션 버튼) -->
+      <footer class="gamza-modal-footer">
+        <button type="button" class="btn-cancel" id="write-cancel-btn">취소</button>
+        <button type="submit" class="btn-submit" id="write-submit-btn">
+          <span class="submit-icon">🥔</span> 감자 등록하기
+        </button>
+      </footer>
+    </form>
+  </div>
+</div>
