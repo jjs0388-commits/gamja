@@ -301,28 +301,53 @@ img {
 .user-nickname-badge {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   background-color: var(--point-yellow-light);
   border: 1px solid var(--point-yellow-border);
   color: var(--gamza-brown-dark);
-  padding: 8px 14px;
+  padding: 5px 12px 5px 6px;
   border-radius: var(--border-radius-md);
   font-weight: 700;
   font-size: 0.92rem;
   letter-spacing: -0.2px;
   box-shadow: 0 1px 3px rgba(74, 46, 24, 0.05);
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.user-nickname-badge .user-icon {
-  font-size: 1.05rem;
-  line-height: 1;
+.user-nickname-badge:hover {
+  background-color: #FFF2C2;
+  border-color: var(--point-yellow);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(255, 199, 0, 0.35);
+}
+
+.header-user-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid var(--gamza-brown);
+  background-color: #FFFFFF;
+  flex-shrink: 0;
 }
 
 .user-nickname-badge .user-nickname-text {
-  max-width: 110px;
+  max-width: 100px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.header-profile-edit-icon {
+  font-size: 0.74rem;
+  opacity: 0.65;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.user-nickname-badge:hover .header-profile-edit-icon {
+  opacity: 1;
+  transform: scale(1.15);
 }
 
 .btn-logout {
@@ -2074,6 +2099,243 @@ img {
 }
 
 /* ========================================================
+   9-1. [화면 5] 내 프로필 수정 모달 스타일
+   ======================================================== */
+.profile-modal-container {
+  max-width: 460px;
+  width: 92%;
+  background-color: #FFFFFF;
+  border-radius: var(--border-radius-xl);
+  box-shadow: var(--shadow-modal);
+}
+
+.profile-modal-body {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* 프로필 이미지 관리 영역 */
+.profile-avatar-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 0 10px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.profile-avatar-preview-wrap {
+  position: relative;
+  width: 104px;
+  height: 104px;
+}
+
+.profile-avatar-box {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid var(--point-yellow);
+  box-shadow: 0 4px 14px rgba(54, 32, 13, 0.14);
+  cursor: pointer;
+  position: relative;
+  background-color: var(--bg-subtle);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.profile-avatar-box:hover {
+  transform: scale(1.03);
+  box-shadow: 0 6px 18px rgba(255, 199, 0, 0.45);
+}
+
+.profile-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.avatar-camera-badge {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--gamza-brown-dark);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2.5px solid #FFFFFF;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  pointer-events: none;
+}
+
+.profile-avatar-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.btn-avatar-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 14px;
+  border-radius: 9999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  background-color: var(--bg-subtle);
+  color: var(--gamza-brown-dark);
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-avatar-action:hover {
+  background-color: #EADBCE;
+  transform: translateY(-1px);
+}
+
+.btn-avatar-default {
+  color: var(--text-muted);
+}
+
+.btn-avatar-default:hover {
+  color: var(--gamza-brown-dark);
+}
+
+/* 프리셋 아바타 선택 */
+.profile-preset-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 2px;
+}
+
+.preset-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.preset-avatar-list {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.preset-avatar-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid transparent;
+  padding: 0;
+  cursor: pointer;
+  background: none;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.preset-avatar-btn img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.preset-avatar-btn:hover {
+  transform: scale(1.12);
+  border-color: var(--point-yellow);
+}
+
+.preset-avatar-btn.active {
+  border-color: var(--point-yellow);
+  box-shadow: 0 0 0 2px rgba(255, 199, 0, 0.5);
+  transform: scale(1.08);
+}
+
+/* 매너온도 안내 카드 */
+.profile-manner-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background-color: #F8F4EE;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+}
+
+.manner-card-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.manner-card-icon {
+  font-size: 1.5rem;
+}
+
+.manner-card-texts {
+  display: flex;
+  flex-direction: column;
+}
+
+.manner-card-title {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.manner-card-temp {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: var(--gamza-brown-dark);
+}
+
+.manner-card-badge {
+  font-size: 0.78rem;
+  font-weight: 800;
+  padding: 4px 10px;
+  background-color: var(--point-yellow-light);
+  color: var(--point-yellow-text);
+  border: 1px solid var(--point-yellow-border);
+  border-radius: 6px;
+}
+
+/* 폼 인풋 보강 */
+.input-with-counter {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-with-counter .form-input {
+  width: 100%;
+  padding-right: 50px;
+}
+
+.input-with-counter .char-count {
+  position: absolute;
+  right: 14px;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.form-input-readonly {
+  background-color: var(--bg-subtle) !important;
+  color: var(--text-muted) !important;
+  cursor: not-allowed;
+  border-color: var(--border-color) !important;
+}
+
+/* ========================================================
    10. [모바일 전용 앱 반응형 시스템] - 당근마켓 스타일 모바일 UX
    - 화면 3 [글쓰기 모달] 우측 잘림 현상 원천 차단
    - 모바일 풀스크린 모달, 플로팅 글쓰기 FAB, 하단 네비게이션 바
@@ -2719,6 +2981,37 @@ img {
   #gamza-auth-modal .auth-switch-prompt {
     font-size: 0.8rem !important;
     margin-top: 8px !important;
+  }
+
+  /* ========================================================
+     [화면 5] 프로필 수정 모달 모바일 최적화
+     ======================================================== */
+  #gamza-profile-modal {
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+    padding: max(16px, env(safe-area-inset-top, 16px)) 16px max(320px, env(safe-area-inset-bottom, 20px)) !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  #gamza-profile-modal .profile-modal-container {
+    width: 100% !important;
+    max-width: 410px !important;
+    border-radius: var(--border-radius-lg) !important;
+    height: auto !important;
+    margin: 10px auto 0 !important;
+    box-shadow: 0 10px 30px rgba(38, 29, 23, 0.28) !important;
+  }
+
+  #gamza-profile-modal .profile-modal-body {
+    padding: 18px 16px 20px !important;
+    gap: 16px !important;
+  }
+
+  #gamza-profile-modal .form-input,
+  #gamza-profile-modal .form-select {
+    font-size: 16px !important; /* iOS 자동 줌 방지 */
   }
 }
 

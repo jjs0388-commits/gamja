@@ -58,10 +58,11 @@
 
         <!-- 로그인 후: 닉네임 & 로그아웃 버튼 (로그인 전에는 숨김) -->
         <div id="user-profile-menu" class="user-profile-menu" style="display: none;">
-          <div class="user-nickname-badge" id="header-user-nickname" title="내 감자 닉네임">
-            <span class="user-icon">🥔</span>
+          <button type="button" class="user-nickname-badge" id="header-user-nickname" title="내 프로필 수정하기">
+            <img id="header-user-avatar" class="header-user-avatar" src="images/user_avatar1.jpg" alt="내 프로필" />
             <span class="user-nickname-text" id="header-user-text">감자이웃</span>
-          </div>
+            <span class="header-profile-edit-icon" title="프로필 수정">✏️</span>
+          </button>
           <button type="button" id="btn-logout" class="btn btn-logout" title="로그아웃">
             로그아웃
           </button>
@@ -738,6 +739,150 @@
           <span>이미 계정이 있으신가요?</span>
           <button type="button" id="btn-goto-login" class="auth-switch-link">로그인하기</button>
         </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       [화면 5] 내 프로필 수정 모달
+       ======================================================== -->
+  <div id="gamza-profile-modal" class="gamza-modal-overlay" aria-hidden="true" role="dialog" aria-labelledby="profile-modal-title">
+    <div class="gamza-modal-backdrop"></div>
+
+    <div class="gamza-modal-container profile-modal-container" role="document">
+      <!-- 헤더 -->
+      <header class="gamza-modal-header">
+        <div class="gamza-modal-title-wrap">
+          <h2 id="profile-modal-title" class="gamza-modal-title">
+            <span>🥔</span>
+            <span>내 프로필 수정</span>
+          </h2>
+          <p class="gamza-modal-desc">감자마켓 이웃들에게 보일 내 프로필 사진과 닉네임을 설정하세요.</p>
+        </div>
+        <button type="button" class="gamza-modal-close" id="btn-close-profile-modal" aria-label="프로필 창 닫기">
+          ✕
+        </button>
+      </header>
+
+      <!-- 프로필 수정 폼 -->
+      <form id="gamza-profile-form" class="gamza-profile-form" novalidate>
+        <div class="gamza-modal-body profile-modal-body">
+          
+          <!-- 1. 프로필 이미지 관리 섹션 -->
+          <section class="profile-avatar-section">
+            <div class="profile-avatar-preview-wrap">
+              <div class="profile-avatar-box" id="profile-avatar-box" title="사진을 변경하려면 클릭하세요">
+                <img id="profile-avatar-preview" src="images/user_avatar1.jpg" alt="내 프로필 사진" class="profile-avatar-img" />
+                <div class="avatar-camera-badge" aria-hidden="true" title="사진 변경">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                    <circle cx="12" cy="13" r="4"></circle>
+                  </svg>
+                </div>
+              </div>
+              <input type="file" id="profile-avatar-file" accept="image/*" style="display: none;" />
+              <input type="hidden" id="profile-avatar-url" value="images/user_avatar1.jpg" />
+            </div>
+
+            <div class="profile-avatar-controls">
+              <button type="button" id="btn-change-avatar" class="btn-avatar-action">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                  <circle cx="12" cy="13" r="4"></circle>
+                </svg>
+                <span>사진 변경</span>
+              </button>
+              <button type="button" id="btn-default-avatar" class="btn-avatar-action btn-avatar-default" title="기본 감자 이미지로 초기화">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                  <path d="M3 3v5h5"></path>
+                </svg>
+                <span>기본 이미지로</span>
+              </button>
+            </div>
+
+            <!-- 추천 기본 아바타 선택 프리셋 -->
+            <div class="profile-preset-section">
+              <span class="preset-label">추천 기본 아바타:</span>
+              <div class="preset-avatar-list" id="preset-avatar-list">
+                <button type="button" class="preset-avatar-btn active" data-avatar="images/user_avatar1.jpg" title="기본 감자">
+                  <img src="images/user_avatar1.jpg" alt="기본 감자" />
+                </button>
+                <button type="button" class="preset-avatar-btn" data-avatar="images/user_avatar2.jpg" title="이웃 감자">
+                  <img src="images/user_avatar2.jpg" alt="이웃 감자" />
+                </button>
+                <button type="button" class="preset-avatar-btn" data-avatar="images/sample_potato.jpg" title="황금 감자">
+                  <img src="images/sample_potato.jpg" alt="황금 감자" />
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <!-- 2. 내 감자 매너온도 & 등급 안내 카드 -->
+          <div class="profile-manner-card">
+            <div class="manner-card-left">
+              <span class="manner-card-icon">🥔</span>
+              <div class="manner-card-texts">
+                <span class="manner-card-title">나의 감자온도</span>
+                <span class="manner-card-temp" id="profile-display-temp">36.5℃</span>
+              </div>
+            </div>
+            <div class="manner-card-badge" id="profile-display-level">
+              인증판매자
+            </div>
+          </div>
+
+          <!-- 3. 닉네임 입력 -->
+          <section class="form-section">
+            <label for="profile-nickname" class="form-label required">닉네임</label>
+            <div class="input-with-counter">
+              <input 
+                type="text" 
+                id="profile-nickname" 
+                class="form-input" 
+                placeholder="닉네임을 입력하세요 (2~15자)" 
+                maxlength="15" 
+                minlength="2" 
+                required 
+              />
+              <span class="char-count"><span id="profile-nick-count">0</span>/15</span>
+            </div>
+            <span class="form-error" id="error-profile-nickname"></span>
+          </section>
+
+          <!-- 4. 내 동네 (활동 지역) -->
+          <section class="form-section">
+            <label for="profile-location" class="form-label required">내 동네 (활동 지역)</label>
+            <select id="profile-location" class="form-select" required>
+              <option value="역삼1동">역삼1동</option>
+              <option value="역삼2동">역삼2동</option>
+              <option value="서초동">서초동</option>
+              <option value="삼성동">삼성동</option>
+              <option value="개포동">개포동</option>
+              <option value="대치동">대치동</option>
+              <option value="청담동">청담동</option>
+              <option value="논현동">논현동</option>
+              <option value="신사동">신사동</option>
+              <option value="반포동">반포동</option>
+            </select>
+          </section>
+
+          <!-- 5. 이메일 계정 (읽기 전용) -->
+          <section class="form-section">
+            <label class="form-label">계정 이메일</label>
+            <input type="text" id="profile-email" class="form-input form-input-readonly" readonly />
+          </section>
+
+          <div id="profile-error-msg" class="auth-error-banner" style="display: none;"></div>
+        </div>
+
+        <!-- 모달 푸터 -->
+        <footer class="gamza-modal-footer">
+          <button type="button" id="btn-cancel-profile" class="btn btn-cancel">취소</button>
+          <button type="submit" id="btn-submit-profile" class="btn btn-submit">
+            <span class="btn-text" id="submit-profile-text">🥔 프로필 저장 완료</span>
+          </button>
+        </footer>
       </form>
     </div>
   </div>

@@ -297,11 +297,19 @@
     const btnLogin = document.getElementById('btn-login');
     const userMenu = document.getElementById('user-profile-menu');
     const headerNick = document.getElementById('header-user-text');
+    const headerAvatar = document.getElementById('header-user-avatar');
 
     if (state.currentUser) {
       if (btnLogin) btnLogin.style.display = 'none';
       if (userMenu) userMenu.style.display = 'flex';
       if (headerNick) headerNick.textContent = state.currentUser.nickname || '감자이웃';
+      if (headerAvatar) {
+        headerAvatar.src = state.currentUser.avatar_url || DEFAULT_REAL_AVATAR;
+        headerAvatar.onerror = function () {
+          this.onerror = null;
+          this.src = DEFAULT_REAL_AVATAR;
+        };
+      }
     } else {
       if (btnLogin) btnLogin.style.display = 'inline-block';
       if (userMenu) userMenu.style.display = 'none';
@@ -760,6 +768,288 @@
       console.error('로그아웃 오류:', err);
       state.currentUser = null;
       updateHeaderAuthUI();
+    }
+  }
+
+  // ==================================================================
+  // 3-2. [화면 5] 내 프로필 수정 및 프로필 이미지 관리 모듈
+  // ==================================================================
+  let profileModalTimer = null;
+
+  function openProfileModal() {
+    if (Date.now() - lastModalClosedTime < MODAL_CLICK_THROUGH_GUARD_MS) return;
+
+    if (!state.currentUser) {
+      openAuthModal('login', '🥔 프로필을 확인하고 수정하려면 먼저 로그인해주세요!');
+      return;
+    }
+
+    const modalEl = document.getElementById('gamza-profile-modal');
+    if (!modalEl) return;
+
+    // 폼 값 초기화 및 현재 사용자 정보 채우기
+    const previewImg = document.getElementById('profile-avatar-preview');
+    const avatarUrlInput = document.getElementById('profile-avatar-url');
+    const nickInput = document.getElementById('profile-nickname');
+    const nickCount = document.getElementById('profile-nick-count');
+    const locationSelect = document.getElementById('profile-location');
+    const emailInput = document.getElementById('profile-email');
+    const tempEl = document.getElementById('profile-display-temp');
+    const levelEl = document.getElementById('profile-display-level');
+    const errorBanner = document.getElementById('profile-error-msg');
+    const nickError = document.getElementById('error-profile-nickname');
+
+    const curAvatar = state.currentUser.avatar_url || DEFAULT_REAL_AVATAR;
+    if (previewImg) {
+      previewImg.onerror = function () {
+        this.onerror = null;
+        this.src = DEFAULT_REAL_AVATAR;
+      };
+      previewImg.src = curAvatar;
+    }
+    if (avatarUrlInput) avatarUrlInput.value = curAvatar;
+
+    // 프리셋 버튼 활성화 상태 갱신
+    updatePresetAvatarActive(curAvatar);
+
+    if (nickInput) {
+      nickInput.value = state.currentUser.nickname || '';
+      nickInput.classList.remove('has-error');
+      if (nickCount) nickCount.textContent = (state.currentUser.nickname || '').length;
+    }
+    if (nickError) {
+      nickError.textContent = '';
+      nickError.classList.remove('show');
+    }
+    if (locationSelect) {
+      locationSelect.value = state.currentUser.location || '역삼1동';
+    }
+    if (emailInput) {
+      emailInput.value = state.currentUser.email || '';
+    }
+    if (tempEl) {
+      tempEl.textContent = `${state.currentUser.temperature || 36.5}℃`;
+    }
+    if (levelEl) {
+      levelEl.textContent = state.currentUser.level || '인증판매자';
+    }
+    if (errorBanner) {
+      errorBanner.style.display = 'none';
+      errorBanner.textContent = '';
+    }
+
+    if (profileModalTimer) {
+      clearTimeout(profileModalTimer);
+      profileModalTimer = null;
+    }
+    modalEl.classList.remove('is-closing');
+
+    requestAnimationFrame(() => {
+      modalEl.classList.add('is-open');
+      modalEl.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('modal-open');
+
+      if (nickInput) {
+        setTimeout(() => nickInput.focus(), 120);
+      }
+    });
+  }
+
+  function closeProfileModal(e) {
+    if (e) {
+      if (e.preventDefault) e.preventDefault();
+      if (e.stopPropagation) e.stopPropagation();
+    }
+
+    lastModalClosedTime = Date.now();
+    const modalEl = document.getElementById('gamza-profile-modal');
+    if (modalEl && (modalEl.classList.contains('is-open') || modalEl.classList.contains('active'))) {
+      if (profileModalTimer) clearTimeout(profileModalTimer);
+
+      modalEl.classList.add('is-closing');
+      modalEl.classList.remove('is-open');
+      modalEl.setAttribute('aria-hidden', 'true');
+
+      profileModalTimer = setTimeout(() => {
+        modalEl.classList.remove('is-closing');
+        document.body.classList.remove('modal-open');
+        profileModalTimer = null;
+      }, 260);
+    }
+  }
+
+  function updatePresetAvatarActive(avatarUrl) {
+    const presetBtns = document.querySelectorAll('.preset-avatar-btn');
+    presetBtns.forEach(btn => {
+      if (btn.dataset.avatar === avatarUrl) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+  }
+
+  function setProfileAvatar(avatarUrl, isPreset = false) {
+    const previewImg = document.getElementById('profile-avatar-preview');
+    const avatarUrlInput = document.getElementById('profile-avatar-url');
+
+    if (previewImg) {
+      previewImg.onerror = function () {
+        this.onerror = null;
+        this.src = DEFAULT_REAL_AVATAR;
+      };
+      previewImg.src = avatarUrl;
+    }
+    if (avatarUrlInput) {
+      avatarUrlInput.value = avatarUrl;
+    }
+    updatePresetAvatarActive(avatarUrl);
+  }
+
+  // 프로필 이미지 압축 및 DataURL 변환 (400x400 스마트 캔버스 최적화)
+  function compressAndSetProfileImage(file) {
+    if (!file || !file.type.startsWith('image/')) {
+      showToast('⚠️ 이미지 파일(JPG, PNG 등)만 등록할 수 있습니다.');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX_SIZE = 400;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_SIZE) {
+            height = Math.round((height * MAX_SIZE) / width);
+            width = MAX_SIZE;
+          }
+        } else {
+          if (height > MAX_SIZE) {
+            width = Math.round((width * MAX_SIZE) / height);
+            height = MAX_SIZE;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+        setProfileAvatar(dataUrl, false);
+        showToast('📷 프로필 사진이 등록되었습니다! [저장 완료]를 눌러주세요.');
+      };
+      img.onerror = () => {
+        showToast('⚠️ 이미지 로드에 실패했습니다. 다른 사진을 선택해주세요.');
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  async function handleProfileSubmit(e) {
+    if (e && e.preventDefault) e.preventDefault();
+    if (!state.currentUser) return;
+
+    const nickInput = document.getElementById('profile-nickname');
+    const locationSelect = document.getElementById('profile-location');
+    const avatarUrlInput = document.getElementById('profile-avatar-url');
+    const submitBtn = document.getElementById('btn-submit-profile');
+    const submitText = document.getElementById('submit-profile-text');
+    const errorBanner = document.getElementById('profile-error-msg');
+    const nickError = document.getElementById('error-profile-nickname');
+
+    const newNickname = nickInput ? nickInput.value.trim() : '';
+    const newLocation = locationSelect ? locationSelect.value : '역삼1동';
+    const newAvatar = (avatarUrlInput && avatarUrlInput.value) ? avatarUrlInput.value : DEFAULT_REAL_AVATAR;
+
+    // 유효성 검사
+    if (!newNickname || newNickname.length < 2) {
+      if (nickError) {
+        nickError.textContent = '닉네임은 2자 이상 입력해주세요.';
+        nickError.classList.add('show');
+      }
+      if (nickInput) nickInput.classList.add('has-error');
+      return;
+    }
+    if (newNickname.length > 15) {
+      if (nickError) {
+        nickError.textContent = '닉네임은 15자 이내로 입력해주세요.';
+        nickError.classList.add('show');
+      }
+      if (nickInput) nickInput.classList.add('has-error');
+      return;
+    }
+
+    if (nickError) {
+      nickError.textContent = '';
+      nickError.classList.remove('show');
+    }
+    if (nickInput) nickInput.classList.remove('has-error');
+    if (errorBanner) {
+      errorBanner.style.display = 'none';
+      errorBanner.textContent = '';
+    }
+
+    // 저장 버튼 로딩 상태
+    if (submitBtn) submitBtn.disabled = true;
+    if (submitText) submitText.textContent = '저장 중... 🥔';
+
+    try {
+      if (supabase) {
+        // 1. profiles 테이블 업데이트
+        const { error: profErr } = await supabase
+          .from('profiles')
+          .update({
+            nickname: newNickname,
+            avatar_url: newAvatar,
+            location: newLocation
+          })
+          .eq('id', state.currentUser.id);
+
+        if (profErr) {
+          console.warn('프로필 테이블 업데이트 실패:', profErr);
+          // RLS 또는 행 부재 시 upsert 시도
+          await supabase.from('profiles').upsert({
+            id: state.currentUser.id,
+            nickname: newNickname,
+            avatar_url: newAvatar,
+            location: newLocation
+          });
+        }
+
+        // 2. Supabase Auth 사용자 메타데이터 동기화
+        await supabase.auth.updateUser({
+          data: {
+            nickname: newNickname,
+            avatar_url: newAvatar
+          }
+        });
+      }
+
+      // 로컬 상태 즉시 갱신
+      state.currentUser.nickname = newNickname;
+      state.currentUser.avatar_url = newAvatar;
+      state.currentUser.location = newLocation;
+
+      // 헤더 및 UI 즉시 재렌더링
+      updateHeaderAuthUI();
+
+      closeProfileModal();
+      showToast(`🥔 프로필이 성공적으로 변경되었습니다! 반가워요, ${newNickname}님.`);
+    } catch (err) {
+      console.error('프로필 저장 중 오류:', err);
+      if (errorBanner) {
+        errorBanner.textContent = '프로필 저장 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.';
+        errorBanner.style.display = 'block';
+      }
+    } finally {
+      if (submitBtn) submitBtn.disabled = false;
+      if (submitText) submitText.textContent = '🥔 프로필 저장 완료';
     }
   }
 
@@ -2071,7 +2361,7 @@
           if (!state.currentUser) {
             openAuthModal('login', '🥔 나의 감자를 확인하려면 로그인이 필요해요!');
           } else {
-            showToast(`🥔 ${state.currentUser.nickname || '감자이웃'}님의 매너온도는 ${state.currentUser.temperature || '36.5'}℃입니다.`);
+            openProfileModal();
           }
         }
       });
@@ -2096,6 +2386,99 @@
         e.stopPropagation();
         handleLogout();
       });
+    }
+
+    // 상단 헤더 프로필 닉네임 버튼 클릭 시 프로필 수정 모달 열기
+    const headerUserNickname = document.getElementById('header-user-nickname');
+    if (headerUserNickname) {
+      headerUserNickname.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        openProfileModal();
+      });
+    }
+
+    // ================================================================
+    // 화면 5 (내 프로필 수정 모달) 이벤트 리스너 바인딩
+    // ================================================================
+    attachSafeBackdropClick('gamza-profile-modal', closeProfileModal);
+
+    const btnCloseProfile = document.getElementById('btn-close-profile-modal');
+    if (btnCloseProfile) {
+      btnCloseProfile.addEventListener('click', closeProfileModal);
+    }
+    const btnCancelProfile = document.getElementById('btn-cancel-profile');
+    if (btnCancelProfile) {
+      btnCancelProfile.addEventListener('click', closeProfileModal);
+    }
+
+    // 프로필 아바타 이미지 변경 파일 선택 트리거
+    const avatarBox = document.getElementById('profile-avatar-box');
+    const avatarFileInput = document.getElementById('profile-avatar-file');
+    const btnChangeAvatar = document.getElementById('btn-change-avatar');
+
+    if (avatarBox && avatarFileInput) {
+      avatarBox.addEventListener('click', () => {
+        avatarFileInput.value = '';
+        avatarFileInput.click();
+      });
+    }
+    if (btnChangeAvatar && avatarFileInput) {
+      btnChangeAvatar.addEventListener('click', () => {
+        avatarFileInput.value = '';
+        avatarFileInput.click();
+      });
+    }
+
+    if (avatarFileInput) {
+      avatarFileInput.addEventListener('change', (e) => {
+        const files = e.target.files;
+        if (files && files.length > 0) {
+          compressAndSetProfileImage(files[0]);
+        }
+      });
+    }
+
+    // 기본 이미지로 초기화 버튼
+    const btnDefaultAvatar = document.getElementById('btn-default-avatar');
+    if (btnDefaultAvatar) {
+      btnDefaultAvatar.addEventListener('click', () => {
+        setProfileAvatar(DEFAULT_REAL_AVATAR, true);
+        showToast('🥔 기본 프로필 이미지로 변경되었습니다.');
+      });
+    }
+
+    // 추천 기본 아바타 프리셋 버튼들
+    const presetAvatarBtns = document.querySelectorAll('.preset-avatar-btn');
+    presetAvatarBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetAvatar = btn.dataset.avatar;
+        if (targetAvatar) {
+          setProfileAvatar(targetAvatar, true);
+        }
+      });
+    });
+
+    // 닉네임 실시간 글자수 및 에러 지우기
+    const profileNickInput = document.getElementById('profile-nickname');
+    const profileNickCount = document.getElementById('profile-nick-count');
+    if (profileNickInput) {
+      profileNickInput.addEventListener('input', () => {
+        const len = profileNickInput.value.length;
+        if (profileNickCount) profileNickCount.textContent = len;
+        const nickErr = document.getElementById('error-profile-nickname');
+        if (nickErr) {
+          nickErr.textContent = '';
+          nickErr.classList.remove('show');
+        }
+        profileNickInput.classList.remove('has-error');
+      });
+    }
+
+    // 프로필 폼 제출
+    const profileForm = document.getElementById('gamza-profile-form');
+    if (profileForm) {
+      profileForm.addEventListener('submit', handleProfileSubmit);
     }
 
     // 화면 4 (인증 모달) 백드롭 & 닫기 버튼
@@ -2525,5 +2908,7 @@
   window.handleStartChat = handleStartChat;
   window.openAuthModal = openAuthModal;
   window.closeAuthModal = closeAuthModal;
+  window.openProfileModal = openProfileModal;
+  window.closeProfileModal = closeProfileModal;
   window.handleLogout = handleLogout;
 })();
