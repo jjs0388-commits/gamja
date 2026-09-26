@@ -356,6 +356,7 @@ img {
   overflow-x: auto;
   padding: 6px 4px 10px; /* 호버 시 그림자가 잘리지 않도록 안전 패딩 부여 */
   scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
 }
 
 .category-scroll-container::-webkit-scrollbar {
@@ -2054,3 +2055,600 @@ img {
 .auth-switch-link:hover {
   color: var(--gamza-brown-dark);
 }
+
+/* ========================================================
+   10. [모바일 전용 앱 반응형 시스템] - 당근마켓 스타일 모바일 UX
+   - 화면 3 [글쓰기 모달] 우측 잘림 현상 원천 차단
+   - 모바일 풀스크린 모달, 플로팅 글쓰기 FAB, 하단 네비게이션 바
+   - 모바일 피드 리스트뷰 (가로형 당근 피드 스타일)
+   ======================================================== */
+
+/* 기본(데스크톱/태블릿)에서는 모바일 전용 요소 숨김 */
+.mobile-write-fab {
+  display: none;
+}
+
+.gamza-mobile-bottom-nav {
+  display: none;
+}
+
+/* --------------------------------------------------------
+   모바일 전용 미디어 쿼리 (화면 너비 <= 768px)
+   -------------------------------------------------------- */
+@media (max-width: 768px) {
+  /* 1) 모바일 전용 플로팅 글쓰기 버튼 (FAB) */
+  .mobile-write-fab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    position: fixed;
+    right: 18px;
+    bottom: calc(60px + env(safe-area-inset-bottom, 0px) + 16px);
+    height: 48px;
+    padding: 0 18px;
+    background-color: var(--point-yellow);
+    color: var(--point-yellow-text);
+    border-radius: 9999px;
+    font-size: 0.94rem;
+    font-weight: 900;
+    box-shadow: 0 6px 20px rgba(255, 199, 0, 0.55), 0 3px 8px rgba(54, 32, 13, 0.18);
+    z-index: 100;
+    border: 1.5px solid rgba(255, 255, 255, 0.9);
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+  }
+
+  .mobile-write-fab:active {
+    transform: scale(0.93);
+  }
+
+  .mobile-write-fab .fab-icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* 2) 모바일 전용 하단 네비게이션 바 (Bottom Navigation) */
+  .gamza-mobile-bottom-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: calc(58px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    background-color: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-top: 1px solid var(--border-color);
+    z-index: 99;
+    box-shadow: 0 -2px 10px rgba(54, 32, 13, 0.05);
+  }
+
+  .mobile-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    flex: 1;
+    height: 100%;
+    color: var(--text-secondary);
+    transition: color 0.15s ease, transform 0.15s ease;
+    padding: 4px 0;
+  }
+
+  .mobile-nav-item .nav-icon {
+    font-size: 1.25rem;
+    line-height: 1;
+  }
+
+  .mobile-nav-item .nav-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+  }
+
+  .mobile-nav-item.active {
+    color: var(--gamza-brown-dark);
+  }
+
+  .mobile-nav-item.active .nav-label {
+    color: var(--gamza-brown-dark);
+    font-weight: 900;
+  }
+
+  .mobile-nav-item:active {
+    transform: scale(0.92);
+  }
+
+  /* 3) 메인 레이아웃 및 헤더 모바일 최적화 */
+  .gamza-main-content {
+    padding-left: 14px;
+    padding-right: 14px;
+    padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .gamza-header {
+    height: auto;
+    padding: 10px 0;
+  }
+
+  .gamza-header-inner {
+    padding: 0 14px;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .gamza-logo {
+    font-size: 1.22rem;
+  }
+
+  .logo-icon {
+    font-size: 1.45rem;
+  }
+
+  /* 모바일 상단 헤더에서는 글쓰기 버튼 숨김 (하단 FAB로 대체하여 공간 확보) */
+  .btn-write {
+    display: none;
+  }
+
+  .gamza-header-actions {
+    gap: 8px;
+  }
+
+  .btn-login, .btn-logout {
+    padding: 7px 13px;
+    font-size: 0.85rem;
+  }
+
+  .user-nickname-badge {
+    padding: 5px 10px;
+    font-size: 0.82rem;
+  }
+
+  .gamza-search-wrapper {
+    order: 3;
+    width: 100%;
+    max-width: 100%;
+    margin-top: 4px;
+  }
+
+  .search-input-group {
+    padding: 0 14px;
+  }
+
+  .search-input {
+    height: 38px;
+    font-size: 0.9rem;
+  }
+
+  /* 4) 카테고리 네비게이션 모바일 터치 패딩 */
+  .gamza-category-nav {
+    margin-bottom: 16px;
+    margin-left: -14px;
+    margin-right: -14px;
+  }
+
+  .category-scroll-container {
+    padding: 4px 14px 8px;
+    gap: 8px;
+  }
+
+  .category-tab {
+    padding: 8px 14px;
+    font-size: 0.86rem;
+  }
+
+  .gamza-filter-bar {
+    margin-bottom: 14px;
+  }
+
+  /* ========================================================
+     ★ 핵심 해결: [화면 3] 글쓰기 모달 모바일 풀스크린 전환 & 우측 잘림 방지
+     ======================================================== */
+  #gamza-write-modal {
+    padding: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: 100vw !important;
+    max-height: 100vh !important;
+    align-items: stretch !important;
+    justify-content: stretch !important;
+  }
+
+  #gamza-write-modal .gamza-modal-backdrop {
+    background-color: var(--bg-card); /* 모바일에서는 깔끔한 전체 화면 앱 느낌 */
+  }
+
+  #gamza-write-modal .gamza-modal-container {
+    max-width: 100% !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+    background-color: #FFFFFF !important;
+  }
+
+  #gamza-write-modal.is-open .gamza-modal-container {
+    transform: none !important;
+  }
+
+  #gamza-write-modal.is-closing .gamza-modal-container {
+    transform: translateY(20px) !important;
+  }
+
+  /* 글쓰기 모달 헤더: 스마트폰 상단 네비게이션 바 스타일 */
+  #gamza-write-modal .gamza-modal-header {
+    padding: 12px 16px !important;
+    min-height: 54px !important;
+    height: 54px !important;
+    flex-shrink: 0 !important;
+    background: #FFFFFF !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    position: relative !important;
+    z-index: 30 !important;
+  }
+
+  #gamza-write-modal .gamza-modal-title-wrap {
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+  }
+
+  #gamza-write-modal .gamza-modal-title {
+    font-size: 1.12rem !important;
+    font-weight: 900 !important;
+  }
+
+  #gamza-write-modal .gamza-modal-desc {
+    display: none !important; /* 모바일에서는 서브 설명 숨겨 깔끔한 앱 헤더 연출 */
+  }
+
+  #gamza-write-modal .gamza-modal-close {
+    position: static !important;
+    width: 36px !important;
+    height: 36px !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* 글쓰기 모달 폼 본문: 모바일 세로 풀 스크롤 영역 */
+  #gamza-write-modal .gamza-write-form {
+    flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: 0 !important;
+    height: calc(100% - 54px) !important;
+    overflow: hidden !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  #gamza-write-modal .gamza-modal-body {
+    flex: 1 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding: 16px 16px 28px !important;
+    gap: 18px !important;
+    min-height: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  #gamza-write-modal .form-section {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* 인풋 필드 터치 영역 최적화 & iOS 자동 줌 방지 (16px) */
+  #gamza-write-modal .form-input,
+  #gamza-write-modal .form-textarea,
+  #gamza-write-modal .form-select {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    font-size: 16px !important;
+    padding: 11px 14px !important;
+  }
+
+  /* 이미지 업로더 모바일 레이아웃 */
+  #gamza-write-modal .image-uploader-wrapper {
+    flex-direction: column !important;
+    width: 100% !important;
+    gap: 12px !important;
+  }
+
+  #gamza-write-modal .image-preview-box {
+    width: 96px !important;
+    height: 96px !important;
+    border-radius: var(--border-radius-md) !important;
+  }
+
+  #gamza-write-modal .image-input-controls {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  #gamza-write-modal .image-source-tabs {
+    display: flex !important;
+    gap: 6px !important;
+    width: 100% !important;
+  }
+
+  #gamza-write-modal .tab-btn {
+    flex: 1 !important;
+    padding: 9px 2px !important;
+    font-size: 0.8rem !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    border-radius: 8px !important;
+  }
+
+  #gamza-write-modal .sample-chips {
+    width: 100% !important;
+    max-width: 100% !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+  }
+
+  #gamza-write-modal .sample-chip {
+    font-size: 0.78rem !important;
+    padding: 6px 10px !important;
+    white-space: nowrap !important;
+  }
+
+  #gamza-write-modal .url-input-wrap {
+    width: 100% !important;
+    display: flex !important;
+    gap: 8px !important;
+  }
+
+  #gamza-write-modal .url-input-wrap input {
+    flex: 1 !important;
+    min-width: 0 !important;
+  }
+
+  /* 카테고리 & 판매 상태 세로 1열 전환 (우측 잘림 완벽 방지) */
+  #gamza-write-modal .form-row {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+    width: 100% !important;
+  }
+
+  #gamza-write-modal .radio-status-group {
+    display: flex !important;
+    gap: 6px !important;
+    width: 100% !important;
+  }
+
+  #gamza-write-modal .radio-status-card {
+    flex: 1 !important;
+    min-width: 0 !important;
+  }
+
+  #gamza-write-modal .radio-status-card .status-badge {
+    padding: 10px 2px !important;
+    font-size: 0.82rem !important;
+    text-align: center !important;
+    width: 100% !important;
+    white-space: nowrap !important;
+  }
+
+  #gamza-write-modal .label-with-option {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+  }
+
+  #gamza-write-modal .price-input-wrapper {
+    width: 100% !important;
+  }
+
+  #gamza-write-modal .quick-price-chips {
+    width: 100% !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+  }
+
+  #gamza-write-modal .quick-price-chips .price-chip {
+    font-size: 0.78rem !important;
+    padding: 6px 10px !important;
+  }
+
+  #gamza-write-modal .location-input-wrapper {
+    width: 100% !important;
+  }
+
+  /* 글쓰기 모달 푸터: 화면 하단 고정 액션 바 (Safe-Area 패딩 완벽 지원) */
+  #gamza-write-modal .gamza-modal-footer {
+    position: sticky !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    padding: 12px 16px max(16px, env(safe-area-inset-bottom, 0px)) !important;
+    background: #FFFFFF !important;
+    border-top: 1px solid var(--border-color) !important;
+    box-shadow: 0 -4px 16px rgba(54, 32, 13, 0.06) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    z-index: 30 !important;
+    flex-shrink: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  #gamza-write-modal .btn-cancel {
+    flex: 1 !important;
+    min-height: 48px !important;
+    font-size: 0.95rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+  }
+
+  #gamza-write-modal .btn-submit {
+    flex: 2 !important;
+    min-height: 48px !important;
+    font-size: 1rem !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+  }
+
+  /* ========================================================
+     [화면 2] 상품 상세 모달 모바일 최적화 (풀스크린 & 바텀 액션 바)
+     ======================================================== */
+  #gamzaDetailModal {
+    padding: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    align-items: stretch !important;
+    justify-content: stretch !important;
+  }
+
+  #gamzaDetailModal .gamza-modal-container {
+    max-width: 100% !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-height: 100% !important;
+    border-radius: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  #gamzaDetailModal.is-open .gamza-modal-container {
+    transform: none !important;
+  }
+
+  #gamzaDetailModal .gamza-modal-scroll-body {
+    flex: 1 !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  #gamzaDetailModal .gamza-modal-image-wrap {
+    height: 280px !important;
+    max-height: 45vh !important;
+  }
+
+  #gamzaDetailModal .gamza-modal-bottom-actions {
+    position: sticky !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    padding: 12px 16px max(14px, env(safe-area-inset-bottom, 0px)) !important;
+    background: #FFFFFF !important;
+    border-top: 1px solid var(--border-color) !important;
+    box-shadow: 0 -4px 14px rgba(54, 32, 13, 0.06) !important;
+    z-index: 30 !important;
+  }
+
+  /* ========================================================
+     [화면 4] 로그인/인증 모달 모바일 최적화
+     ======================================================== */
+  #gamza-auth-modal .auth-modal-container {
+    width: calc(100% - 32px) !important;
+    max-width: 400px !important;
+    border-radius: var(--border-radius-lg) !important;
+    height: auto !important;
+    max-height: 90vh !important;
+    margin: auto !important;
+    padding: 28px 20px 22px !important;
+  }
+}
+
+/* --------------------------------------------------------
+   모바일 전용 상품 피드 리스트뷰 (화면 너비 <= 640px)
+   - 당근마켓 모바일 앱 시그니처 1열 가로형 리스트 피드
+   -------------------------------------------------------- */
+@media (max-width: 640px) {
+  .gamza-product-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  .gamza-card {
+    flex-direction: row !important;
+    align-items: stretch !important;
+    padding: 12px !important;
+    gap: 14px !important;
+    border-radius: var(--border-radius-md) !important;
+    box-shadow: 0 1px 4px rgba(54, 32, 13, 0.04) !important;
+  }
+
+  .card-thumbnail-wrap {
+    width: 104px !important;
+    height: 104px !important;
+    min-width: 104px !important;
+    border-radius: 10px !important;
+    aspect-ratio: 1 / 1 !important;
+    flex-shrink: 0 !important;
+  }
+
+  .card-status-badge {
+    top: 6px !important;
+    left: 6px !important;
+    font-size: 0.72rem !important;
+    padding: 3px 7px !important;
+  }
+
+  .card-body {
+    padding: 0 !important;
+    justify-content: space-between !important;
+    overflow: hidden !important;
+    flex: 1 !important;
+  }
+
+  .card-category-tag {
+    font-size: 0.74rem !important;
+    margin-bottom: 2px !important;
+  }
+
+  .card-title {
+    font-size: 0.95rem !important;
+    margin-bottom: 3px !important;
+    line-height: 1.35 !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+  }
+
+  .card-meta {
+    font-size: 0.78rem !important;
+    margin-bottom: 4px !important;
+  }
+
+  .card-price {
+    font-size: 1.05rem !important;
+  }
+
+  .card-footer {
+    margin-top: 2px !important;
+    padding-top: 0 !important;
+    border-top: none !important;
+  }
+}
+

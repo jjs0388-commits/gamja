@@ -197,7 +197,10 @@
   function getFilteredProducts() {
     return state.products.filter(item => {
       // 카테고리 필터
-      const matchCategory = (state.activeCategory === '전체' || item.category === state.activeCategory);
+      const isPetCategory = (cat) => cat === '반려동물 용품' || cat === '변려동물 용품' || cat === '반려동물' || cat === '변려동물';
+      const matchCategory = (state.activeCategory === '전체' ||
+        item.category === state.activeCategory ||
+        (isPetCategory(state.activeCategory) && isPetCategory(item.category)));
 
       // 실시간 검색어 필터 (상품명 및 위치 검색)
       const trimmedKeyword = state.searchKeyword.trim().toLowerCase();

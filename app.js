@@ -197,6 +197,30 @@
       likes: 15,
       isWished: false,
       isNegotiable: false
+    },
+    {
+      id: 7,
+      title: '원목 프리미엄 캣타워 & 스크래쳐 풀세트 (미사용 새상품급)',
+      category: '반려동물 용품',
+      price: 65000,
+      isFree: false,
+      location: '마포구 망원동',
+      tradeLocation: '망원역 2번 출구 앞 또는 인근 직거래',
+      createdAt: '30분 전',
+      status: '판매중',
+      imageUrl: 'images/sample_potato.jpg',
+      description: '인테리어 효과도 뛰어난 자작나무 원목 캣타워입니다.\n사이즈 미스로 조립 후 미사용 상태로 보관 중입니다.\n스크래쳐 패드와 해먹까지 풀구성입니다. 부피가 있어 직거래 희망합니다!',
+      seller: {
+        nickname: '포근한강아지',
+        avatar: 'images/user_avatar1.jpg',
+        location: '망원2동',
+        temperature: 41.5,
+        level: '우수 감자'
+      },
+      views: 28,
+      likes: 9,
+      isWished: false,
+      isNegotiable: true
     }
   ];
 
@@ -872,7 +896,10 @@
   function getFilteredProducts() {
     return state.products.filter(item => {
       // 1) 카테고리 필터
-      const matchCategory = (state.activeCategory === '전체' || item.category === state.activeCategory);
+      const isPetCategory = (cat) => cat === '반려동물 용품' || cat === '변려동물 용품' || cat === '반려동물' || cat === '변려동물';
+      const matchCategory = (state.activeCategory === '전체' ||
+        item.category === state.activeCategory ||
+        (isPetCategory(state.activeCategory) && isPetCategory(item.category)));
 
       // 2) 검색어 필터 (제목 및 동네)
       const keyword = state.searchKeyword.trim().toLowerCase();
@@ -1409,7 +1436,13 @@
     if (titleInput) titleInput.value = item.title || '';
 
     const categorySelect = document.getElementById('write-category');
-    if (categorySelect) categorySelect.value = item.category || '';
+    if (categorySelect) {
+      if (['반려동물 용품', '변려동물 용품', '반려동물', '변려동물'].includes(item.category)) {
+        categorySelect.value = '반려동물 용품';
+      } else {
+        categorySelect.value = item.category || '';
+      }
+    }
 
     const isFreeCheck = document.getElementById('write-is-free');
     const priceInput = document.getElementById('write-price');
@@ -1993,21 +2026,56 @@
       });
     }
 
-    // [글쓰기] 버튼
+    // [글쓰기] 버튼 (상단 헤더 버튼 & 모바일 전용 FAB)
+    const handleOpenWriteClick = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (Date.now() - lastModalClosedTime < MODAL_CLICK_THROUGH_GUARD_MS) return;
+      if (!state.currentUser) {
+        pendingActionAfterLogin = 'openWriteModal';
+        openAuthModal('login', '🥔 글을 작성하려면 먼저 로그인이 필요해요!');
+        return;
+      }
+      openWriteModal();
+    };
+
     const btnOpenWrite = document.getElementById('btn-open-write');
     if (btnOpenWrite) {
-      btnOpenWrite.addEventListener('click', (e) => {
+      btnOpenWrite.addEventListener('click', handleOpenWriteClick);
+    }
+
+    const btnMobileWriteFab = document.getElementById('btn-mobile-write-fab');
+    if (btnMobileWriteFab) {
+      btnMobileWriteFab.addEventListener('click', handleOpenWriteClick);
+    }
+
+    // 모바일 전용 하단 네비게이션 탭 이벤트
+    const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
+    mobileNavItems.forEach(item => {
+      item.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        if (Date.now() - lastModalClosedTime < MODAL_CLICK_THROUGH_GUARD_MS) return;
-        if (!state.currentUser) {
-          pendingActionAfterLogin = 'openWriteModal';
-          openAuthModal('login', '🥔 글을 작성하려면 먼저 로그인이 필요해요!');
-          return;
+        mobileNavItems.forEach(n => n.classList.remove('active'));
+        item.classList.add('active');
+
+        const navId = item.id;
+        if (navId === 'nav-item-home') {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else if (navId === 'nav-item-town') {
+          showToast('🏘️ 따뜻한 동네생활 피드가 곧 찾아옵니다!');
+        } else if (navId === 'nav-item-near') {
+          showToast('📍 내 근처 이웃 가게들이 곧 오픈됩니다!');
+        } else if (navId === 'nav-item-chat') {
+          showToast('💬 진행 중인 대화 내역이 없습니다.');
+        } else if (navId === 'nav-item-my') {
+          if (!state.currentUser) {
+            openAuthModal('login', '🥔 나의 감자를 확인하려면 로그인이 필요해요!');
+          } else {
+            showToast(`🥔 ${state.currentUser.nickname || '감자이웃'}님의 매너온도는 ${state.currentUser.temperature || '36.5'}℃입니다.`);
+          }
         }
-        openWriteModal();
       });
-    }
+    });
 
     // [로그인] 버튼
     const btnLogin = document.getElementById('btn-login');
