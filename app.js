@@ -2146,6 +2146,30 @@
       formSignup.addEventListener('submit', handleSignUpSubmit);
     }
 
+    // 모바일 가상 키패드 가림 방지: 인증 모달 인풋 포커스 시 부드럽게 화면 중앙으로 스크롤
+    const authModalEl = document.getElementById('gamza-auth-modal');
+    if (authModalEl) {
+      const authInputs = authModalEl.querySelectorAll('input');
+      authInputs.forEach(input => {
+        input.addEventListener('focus', () => {
+          setTimeout(() => {
+            input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 250);
+        });
+      });
+
+      if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', () => {
+          const activeEl = document.activeElement;
+          if (activeEl && authModalEl.contains(activeEl) && activeEl.tagName === 'INPUT') {
+            setTimeout(() => {
+              activeEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 80);
+          }
+        });
+      }
+    }
+
     // 필터 초기화 버튼
     const btnReset = document.getElementById('btn-reset-filters');
     if (btnReset) {

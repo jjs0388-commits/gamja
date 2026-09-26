@@ -2173,17 +2173,21 @@ img {
 
   .gamza-header {
     height: auto;
-    padding: 10px 0;
+    padding: 10px 0 12px;
   }
 
   .gamza-header-inner {
-    padding: 0 14px;
-    gap: 10px;
+    padding: 0 16px;
+    display: flex;
     flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 0;
   }
 
   .gamza-logo {
-    font-size: 1.22rem;
+    order: 1;
+    font-size: 1.25rem;
   }
 
   .logo-icon {
@@ -2196,33 +2200,45 @@ img {
   }
 
   .gamza-header-actions {
+    order: 2;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
     gap: 8px;
   }
 
   .btn-login, .btn-logout {
-    padding: 7px 13px;
-    font-size: 0.85rem;
+    padding: 7px 14px;
+    font-size: 0.88rem;
+    font-weight: 700;
   }
 
   .user-nickname-badge {
-    padding: 5px 10px;
-    font-size: 0.82rem;
+    padding: 6px 12px;
+    font-size: 0.84rem;
   }
 
+  /* [상품명 검색 입력란 위치 재선정] 모바일 1행 로고/로그인 아래 2행 전체 너비로 시원하게 배치 */
   .gamza-search-wrapper {
     order: 3;
-    width: 100%;
-    max-width: 100%;
-    margin-top: 4px;
+    flex: 0 0 100% !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-top: 8px !important;
   }
 
   .search-input-group {
-    padding: 0 14px;
+    width: 100%;
+    height: 42px;
+    padding: 0 16px;
+    background-color: var(--bg-subtle);
+    border-radius: 12px;
+    border: 1px solid transparent;
   }
 
   .search-input {
-    height: 38px;
-    font-size: 0.9rem;
+    height: 42px;
+    font-size: 0.92rem;
   }
 
   /* 4) 카테고리 네비게이션 모바일 터치 패딩 */
@@ -2566,16 +2582,81 @@ img {
   }
 
   /* ========================================================
-     [화면 4] 로그인/인증 모달 모바일 최적화
+     [화면 4] 로그인/인증 모달 모바일 키패드(가상 키보드) 대응 & 최적화
+     - 키패드에 비밀번호 입력창/로그인 버튼이 가려지지 않도록 상단 배치 및 스크롤 여백 확보
      ======================================================== */
+  #gamza-auth-modal {
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+    padding: max(16px, env(safe-area-inset-top, 16px)) 16px max(340px, env(safe-area-inset-bottom, 20px)) !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
   #gamza-auth-modal .auth-modal-container {
-    width: calc(100% - 32px) !important;
-    max-width: 400px !important;
+    width: 100% !important;
+    max-width: 380px !important;
     border-radius: var(--border-radius-lg) !important;
     height: auto !important;
-    max-height: 90vh !important;
-    margin: auto !important;
-    padding: 28px 20px 22px !important;
+    margin: 10px auto 0 !important;
+    padding: 20px 18px 18px !important;
+    box-shadow: 0 10px 30px rgba(38, 29, 23, 0.28) !important;
+  }
+
+  #gamza-auth-modal .auth-modal-logo {
+    font-size: 1.9rem !important;
+    margin-bottom: 2px !important;
+  }
+
+  #gamza-auth-modal .auth-modal-title {
+    font-size: 1.18rem !important;
+    margin-bottom: 0 !important;
+  }
+
+  #gamza-auth-modal .auth-modal-desc {
+    display: none !important; /* 모바일에서 키패드 가림 방지를 위해 간결화 */
+  }
+
+  #gamza-auth-modal .auth-modal-header {
+    margin-bottom: 12px !important;
+  }
+
+  #gamza-auth-modal .auth-tab-bar {
+    margin-bottom: 12px !important;
+  }
+
+  #gamza-auth-modal .auth-tab {
+    padding: 8px 12px !important;
+    font-size: 0.88rem !important;
+  }
+
+  #gamza-auth-modal .auth-field {
+    margin-bottom: 10px !important;
+  }
+
+  #gamza-auth-modal .auth-label {
+    font-size: 0.82rem !important;
+    margin-bottom: 4px !important;
+  }
+
+  #gamza-auth-modal .auth-input {
+    height: 42px !important;
+    padding: 8px 14px !important;
+    font-size: 16px !important; /* iOS 자동 줌 방지 */
+    border-radius: var(--border-radius-sm) !important;
+  }
+
+  #gamza-auth-modal .btn-auth-submit {
+    height: 44px !important;
+    padding: 0 16px !important;
+    font-size: 0.95rem !important;
+    margin-top: 6px !important;
+  }
+
+  #gamza-auth-modal .auth-switch-prompt {
+    font-size: 0.8rem !important;
+    margin-top: 8px !important;
   }
 }
 
